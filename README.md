@@ -12,6 +12,8 @@ I am a self-taught cybersecurity enterusiast transitioning my career into the se
 -Successfully deployed a virtualized Ubuntu environment using UTM.
 -Resolved complexa authentication issues related to key board mapping and GitHub Personal Access Tokens.
 -Docomented the troubleshooting process for future reference.
+### 15/02/2026 successfully completed the first Git clone via terminal. <-- It's been written from UBUNTU!!.
+
 ## 4. Goals for 2026
 - Obtain CompTIA security+ certification.
 - Perform vulnerability analysis on Docker containers.
