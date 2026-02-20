@@ -1,4 +1,4 @@
-# CyberSecurity Learning Journey
+# CyberSecurity Learning Journey (15/02/26)
 ## 1. Introduction
 I am a self-taught cybersecurity enterusiast transitioning my career into the security field. This repository serves as a professinal record of my techical hands-on labs, research, and progress.
 
