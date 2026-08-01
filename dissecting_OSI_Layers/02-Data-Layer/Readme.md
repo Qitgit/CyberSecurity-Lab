@@ -83,8 +83,7 @@ A switch's CAM table has limited capacity. An attacker can flood it with fake MA
 making eavesdropping trivial.
 
 ### 4. VLAN Hopping
-An attack technique where crafted frames are used to break out of one VLAN and access traffic on another VLAN that should be isolated.<img width="778" height="518" alt="ipconfig" src="https://github.com/user-attachments/assets/df2f2255-7c17-4b43-8c17-a86163d777fa" />
-
+An attack technique where crafted frames are used to break out of one VLAN and access traffic on another VLAN that should be isolated.
 
 ---
 
