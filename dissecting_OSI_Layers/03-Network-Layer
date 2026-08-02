@@ -1,0 +1,21 @@
+### Overview
+
+The Network Layer is 3 of OSI model. While Layer 2 handles communication between devices on the *same* local network using MAC address, Layer 3 is responsible for getting data from one network to another - potentially across the entire internet - using **IP addresses**.
+
+Key responsilites of this layer
+
+-**Logical Addressing**: assigning IP addresses that identify a device's network and host portion (e.g., '192.168.1.999'
+-**Routing**: determining the best path for a packet to travel across multiple networks, hop by hop, via routers
+-**Packet Forwarding**: routers inspect the destination IP and decide which interface/next-hop to forward the packet to
+-**Fragmentation**: breaking packets into smeller piecss if they exceed the MTU(Maximum Transmission Unit) of a given link.
+
+Unlike MAC addresses, IP addresses are **hierarchical** -structured into network and host portions- which is what makes routing at scale possible.
+A router does't need to know every single host in the world; it just needs to know which direction to send traffic for a given network range.
+
+Key protocols at this layer: **IP (IPv4/IPv6)**, **ICMP**, **routing protocols**
+
+##Lab / Practical
+
+### Tracert / TTL Analysis
+
+Ran 'tracert 8.8.8.8' and captured the underlying ICMP traffic with wireshark
