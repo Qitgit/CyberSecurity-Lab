@@ -20,7 +20,7 @@ Key protocols at this layer: **IP (IPv4/IPv6)**, **ICMP**, **routing protocols**
 
 Ran 'tracert 8.8.8.8' and captured the underlying ICMP traffic with wireshark
 
-
+<img width="1002" height="345" alt="tracert" src="https://github.com/user-attachments/assets/f5bce439-c238-4c30-8920-d41c9fda6a5f" />
 
 
 **How traceroute works**
@@ -30,6 +30,7 @@ Ran 'tracert 8.8.8.8' and captured the underlying ICMP traffic with wireshark
 4. This continues, incrementing TTL by 1 each round, until the destination (8.8.8.8) is finally reached
 
 
+<img width="1077" height="356" alt="wireshark-ICMP" src="https://github.com/user-attachments/assets/9ecef62f-d789-495d-945a-c8ea5baf143a" />
 
 
 This is visible directly in the packet list - TTL=4 packets receive "Time-to-live exceeded" from "172.31.21.9' (hop 4), TTL=5 from '116.225.26.68' (hop 5), matching the 'tracert' output line by line.
