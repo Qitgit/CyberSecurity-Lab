@@ -1,0 +1,10 @@
+## Case 01 : Suspicious Onboarding phishing Email
+
+**Alert:** Inbound email containing suspisious External link (Severity: Medium)
+
+### Summary
+An inbound email impersonating an HR onboarding notificatoin was flagged for containing a suspicious external link and an unusual sender domain.
+
+
+### Evidence
+
