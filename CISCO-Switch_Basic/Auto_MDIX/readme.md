@@ -12,11 +12,13 @@ The image shows SW1 and SW2 connected via Fa0/1 using a straight cable, but the 
 *Crossover cable*
 Using a crossover cable, the switches successfully establish a link even without Auto‑MDIX.
 <img width="848" height="323" alt="MDIX wrong cable conn" src="https://github.com/user-attachments/assets/2aa47dcf-a036-47fe-b924-698ca6867f31" />
+
 This image shows SW1 and SW2 connected with a crossover cable, and the link is operational.
 
 *Configure the auto MDIX*
 Auto‑MDIX allows the switch to automatically detect cable type and adjust the interface, making both straight‑through and crossover cables work interchangeably.
 <img width="1088" height="364" alt="config mdix" src="https://github.com/user-attachments/assets/cade5605-4f95-4e8e-97b8-39c1c2324904" />
+
 Switch> enable
 Switch# configure terminal
 Switch(config)# interface FastEthernet0/1
