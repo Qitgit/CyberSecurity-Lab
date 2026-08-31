@@ -6,7 +6,7 @@ This lab demonstrates how different cable types behave when connecting two Cisco
 
 *straight-through*
 When Auto‑MDIX is not enabled, connecting two switches with a straight-through cable results in a link failure.
-<img width="848" height="323" alt="MDIX wrong cable conn" src="https://github.com/user-attachments/assets/6c2d3e21-a33a-4bcf-a58a-f49a69466e88" />
+<img width="848" height="323" alt="MDIX wrong cable conn" src="https://github.com/user-attachments/assets/6c2d3e21-a33a-4bcf-a58a-f49a69466e88" /><br>
 The image shows SW1 and SW2 connected via Fa0/1 using a straight cable, but the link does not come up.
 
 *Crossover cable*
