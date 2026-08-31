@@ -76,4 +76,7 @@ Enables the switch to communicate with devices outside its local VLAN (e.g., rou
 
 <img width="1092" height="119" alt="8switch gateway conf" src="https://github.com/user-attachments/assets/564b1553-6e83-40c1-abe0-5c53aec8aaa0" />
 
+# Summary
+Configuring a VLAN on a switch provides network segmentation, security isolation, management access, and routing control.
+It is essential for enforcing security boundaries, preventing unauthorized access, and maintaining a clean, well‑structured network.
 
