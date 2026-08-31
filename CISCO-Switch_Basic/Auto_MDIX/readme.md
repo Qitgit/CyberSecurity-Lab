@@ -1,7 +1,7 @@
-### overview
+# overview
 **Auto-MDIX** os an Ethernet freature that *automatically detects whether a straight-through or crossover cable is needed* and internally swaps the transmit/receives pairs so the link comes up correctly. In modern networks, this is why you can plug almost any Ethernet cable between almost any two devices and the connection "just works." 
 
-# Enabling Auto-MDIX on Cisco Switches
+## Enabling Auto-MDIX on Cisco Switches
 This lab demonstrates how different cable types behave when connecting two Cisco Catalyst 3560-24PS switches, and how enabling Auto‑MDIX allows the switches to automatically adjust for straight‑through or crossover cabling.
 
 *straight-through*
@@ -22,7 +22,7 @@ Switch# configure terminal
 Switch(config)# interface FastEthernet0/1
 Switch(config-if)# mdix auto
 
-**Security Relevance
+## Security Relevance
 Although Auto-MDIX is a Layer 1 feature, it plays an important role in in network security.  
 It improves availability, reduces physical misconfiguration risks, and ensures reliable connectivity during incident response or forensic analysis.  
 This contributes directly to secure network operations and supports the availability pillar of the CIA Triad.
