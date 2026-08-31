@@ -11,9 +11,7 @@ The image shows SW1 and SW2 connected via Fa0/1 using a straight cable, but the 
 
 *Crossover cable*
 Using a crossover cable, the switches successfully establish a link even without Auto‑MDIX.
-<img width="848" height="323" alt="MDIX wrong cable conn" src="https://github.com/user-attachments/assets/2aa47dcf-a036-47fe-b924-698ca6867f31" />
-
-
+<img width="848" height="323" alt="MDIX wrong cable conn" src="https://github.com/user-attachments/assets/2aa47dcf-a036-47fe-b924-698ca6867f31" /><br>
 This image shows SW1 and SW2 connected with a crossover cable, and the link is operational.
 
 *Configure the auto MDIX*
