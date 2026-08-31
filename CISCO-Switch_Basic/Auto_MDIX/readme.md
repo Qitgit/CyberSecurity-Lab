@@ -1,4 +1,4 @@
-###overview
+### overview
 **Auto-MDIX** os an Ethernet freature that *automatically detects whether a straight-through or crossover cable is needed* and internally swaps the transmit/receives pairs so the link comes up correctly. In modern networks, this is why you can plug almost any Ethernet cable between almost any two devices and the connection "just works." 
 
 # Enabling Auto-MDIX on Cisco Switches
