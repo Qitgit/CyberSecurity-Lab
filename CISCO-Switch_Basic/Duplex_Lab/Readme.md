@@ -27,6 +27,7 @@ The hub operates in Half Duplex, meaning only one device can transmit at a time.
 <img width="661" height="431" alt="Hub rep2" src="https://github.com/user-attachments/assets/53ae0f7e-8cee-44a4-a27d-a8f8293b2d66" />
 
 <img width="642" height="427" alt="Hub rep3" src="https://github.com/user-attachments/assets/19dfb2fc-f3f3-48e9-9fa5-17e06cf4a761" />
+
 ###Ping from PC3 to PC4
 
 What happens:
@@ -61,6 +62,7 @@ Collisions cause retransmissions and packet loss
 ## Duplex Configuration on Switch 
 
 <img width="1005" height="321" alt="3 dif duplex and speed mode" src="https://github.com/user-attachments/assets/2ccbbcfb-34c3-443d-bc7d-96067d54cc8d" />
+
 #Configuration Steps#
 Switch> enable
 Switch# configure terminal
