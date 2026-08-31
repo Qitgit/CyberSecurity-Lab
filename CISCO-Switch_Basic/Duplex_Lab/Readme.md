@@ -41,6 +41,7 @@ So PC4 and PC5 both receive the ping frame
 ## Two PCs Sending Ping at the Same Time(collision)
 
 <img width="1620" height="492" alt="Packet collsion1" src="https://github.com/user-attachments/assets/1ebee79f-751e-495c-927c-fa17d465fdcd" />
+
 What happens:
 
 PC3 sends ping to PC4
@@ -80,7 +81,7 @@ Switch(config-if)# speed auto
 Duplex and speed settings must match on both ends of a link.
 A mismatch (e.g., one side full, the other half) can cause severe packet loss and unstable connections.
 
-# Security Relevance###
+# Security Relevance
 Even though duplex configuration is a physical‑layer concept, it directly affects network reliability and security:
 
 Availability (CIA Triad): Proper duplex settings ensure stable connectivity and prevent downtime.
