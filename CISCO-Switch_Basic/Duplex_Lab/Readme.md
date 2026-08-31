@@ -1,4 +1,4 @@
-###Overview###
+#Overview
 
 This lab demonstrates how hubs operate in a shared collision domain and how duplex settings affect communication reliability.
 By sending ICMP echo requests between multiple PCs connected to a hub, we observe:
@@ -27,7 +27,7 @@ The hub operates in Half Duplex, meaning only one device can transmit at a time.
 <img width="661" height="431" alt="Hub rep2" src="https://github.com/user-attachments/assets/53ae0f7e-8cee-44a4-a27d-a8f8293b2d66" />
 
 <img width="642" height="427" alt="Hub rep3" src="https://github.com/user-attachments/assets/19dfb2fc-f3f3-48e9-9fa5-17e06cf4a761" />
-#Ping from PC3 to PC4
+###Ping from PC3 to PC4
 
 What happens:
 
@@ -58,7 +58,7 @@ When two devices transmit simultaneously → collision
 
 Collisions cause retransmissions and packet loss
 
-## Duplex Configuration on Switch ##
+## Duplex Configuration on Switch 
 
 <img width="1005" height="321" alt="3 dif duplex and speed mode" src="https://github.com/user-attachments/assets/2ccbbcfb-34c3-443d-bc7d-96067d54cc8d" />
 #Configuration Steps#
@@ -78,7 +78,7 @@ Switch(config-if)# speed auto
 Duplex and speed settings must match on both ends of a link.
 A mismatch (e.g., one side full, the other half) can cause severe packet loss and unstable connections.
 
-###Security Relevance###
+#Security Relevance###
 Even though duplex configuration is a physical‑layer concept, it directly affects network reliability and security:
 
 Availability (CIA Triad): Proper duplex settings ensure stable connectivity and prevent downtime.
