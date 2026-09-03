@@ -1,6 +1,6 @@
 # LAN Routing & Configuration Lab
 
-A Cisco Packet Tracer lab demonstrating inter-VLAN/LAN routing, ICMP traversal across a router, and two different DHCP deployment methods - built to reinforce OSI Layer 2/3 concepts from the [Dissecting the OSI Layers](../disssecting_OSI_Layers)
+A Cisco Packet Tracer lab demonstrating inter-VLAN/LAN routing, ICMP traversal across a router, and two different DHCP deployment methods - built to reinforce OSI Layer 2/3 concepts from the [Dissecting the OSI Layers](../dissecting_OSI_Layers)
 series with a practical network build.
 
 ## Topology
@@ -20,4 +20,4 @@ Two separate LANs (192.168.10.0/24) and 192.168.11.0/24) connected via a single 
 
 ## Activities
 
-1. **[Static LAN Setup and Routing](.01-static-lan-routing)** - manual IP configuration, ICMP ping/traceroute analysis across the router, Layer 2/3 PDU breakdown.
+1. **[Static LAN Setup and Routing](./01-Static-LAN-Routing)** - manual IP configuration, ICMP ping/traceroute analysis across the router, Layer 2/3 PDU breakdown.
