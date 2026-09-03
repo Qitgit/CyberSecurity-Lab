@@ -1,20 +1,24 @@
-# CyberSecurity Learning Journey (15/02/26)
-## 1. Introduction
-I am a self-taught cybersecurity enterusiast transitioning my career into the security field. This repository serves as a professinal record of my techical hands-on labs, research, and progress.
+# Cybersecurity Portfolio - ILGYU LEE(Q)
 
-## 2. Technical SKills and tools
-- **Virtualization**: UTM (Running on apple silicon))
-- **Operating systems** : Ubuntu 24.04 LTS, Kali Linux
-- **Platforms** : Docker, Github
+Career-changer transitioning into IT/Cybersecurity (targeting SOC analyst), currently completing certificate IV in Cyber security (TAFE,WA).
 
-## 3. Completed Labs & Projects
-### 15/02/2026 Virtual Lap setup and trupbleshooting
--Successfully deployed a virtualized Ubuntu environment using UTM.
--Resolved complexa authentication issues related to key board mapping and GitHub Personal Access Tokens.
--Docomented the troubleshooting process for future reference.
-### 15/02/2026 successfully completed the first Git clone via terminal. <-- It's been written from UBUNTU!!.
+This repository documents hands-on labs and SOC style case studies,
+built independently and reproduced/extended from coursework and TryHackMe practice.
 
-## 4. Goals for 2026
-- Obtain CompTIA security+ certification.
-- Perform vulnerability analysis on Docker containers.
-- Actively participate in Capture The Flag competitions.
+## Featured Projects
+
+| Project | What it demonstrates |
+|---|---|
+|[Phishing Triage using SIEM](./Phishing-triage-SIEM) | Splunk-based alert triage, multi-source log correlation, IOC extraction - SOC analyst workflow |
+|[Subnetting & VLSM Lab](./Subnetting-VLSM-Lab) | Layer 3 segmentation, subnet overlap misconfiguration diagnosed and fixed |CP, real misconfiguration (missing gateway/DNS) |
+|[LAN Routing & DHCP Lab](./LAN-Routing-DHCP-Lab) | Inter-LAN routing, router-based vs dedicated DHCP, real misconfiguration (missing gateway/DNS) |
+
+## Repository Structure
+
+- **Projects / Labs** - scenario-driven builds with implementation, testing, troubleshooting, and a security perspective (folders above + CISCO-Switch_Basic).
+- **Notes** - personal study notes from coursework, kept for reference (see '/Notes' folder). These reflect learning-in-progress, not finished work. 
+
+## Tools & Environment
+- Cisco Packet Tracer (networking labs)
+- Splunk (SIEM triage)
+- Ubuntu 24.04 / Kali Linux (UTM)
