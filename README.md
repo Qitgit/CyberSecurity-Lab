@@ -22,3 +22,4 @@ built independently and reproduced/extended from coursework and TryHackMe practi
 - Cisco Packet Tracer (networking labs)
 - Splunk (SIEM triage)
 - Ubuntu 24.04 / Kali Linux (UTM)
+
