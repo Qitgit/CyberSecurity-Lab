@@ -10,7 +10,7 @@ built independently and reproduced/extended from coursework and TryHackMe practi
 | Project | What it demonstrates |
 |---|---|
 |[Phishing Triage using SIEM](./Phishing-triage-SIEM) | Splunk-based alert triage, multi-source log correlation, IOC extraction - SOC analyst workflow |
-|[Subnetting & VLSM Lab](./Subnetting-VLSM-Lab) | Layer 3 segmentation, subnet overlap misconfiguration diagnosed and fixed |CP, real misconfiguration (missing gateway/DNS) |
+|[Subnetting & VLSM Lab](./Subnetting-VLSM-Lab) | Layer 3 segmentation, subnet overlap misconfiguration diagnosed and fixed | CP, real misconfiguration (missing gateway/DNS) |
 |[LAN Routing & DHCP Lab](./LAN-Routing-DHCP-Lab) | Inter-LAN routing, router-based vs dedicated DHCP, real misconfiguration (missing gateway/DNS) |
 
 ## Repository Structure
