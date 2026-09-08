@@ -11,8 +11,8 @@
 1. [Switching Fundamentals](#1-switching-fundamentals)
 2. [VLAN Segmentation & Inter-VLAN Routing](#2-vlan-segmentation--inter-vlan-routing)
 3. [Dynamic Routing](#3-dynamic-routing)
-4. [Access Control Lists (ACL) (Coming Soon)](#4-access-control-lists-acl-coming-soon)
-5. [Firewall (Coming Soon)](#5-firewall-coming-soon)
+4. [Access Control Lists (ACL)](#4-access-control-lists-acl)
+5. [Firewall](#5-firewall)
 6. [Lab Checklist](#6-lab-checklist)
 
 ---
@@ -46,7 +46,7 @@ S1(config)# ip default-gateway 172.17.99.1
 - Telnet (TCP 23, plaintext) → **SSH (TCP 22, encrypted)** is the recommended replacement
 - Config order: `ip domain-name` → `crypto key generate rsa` → create local account → under `line vty`, set `transport input ssh` + `login local`
 - Verify: `show ip ssh`, `show ssh`
-  → Naturally connects to restricting vty access to specific management IPs via ACL ([§4 ACL, coming soon](#4-access-control-lists-acl-coming-soon))
+  → Restricting vty access to specific management IPs is a **standard ACL** job — see [§4.4](#44-standard-vs-extended-acls)
 
 ### 1.4 Common LAN-Layer Attacks
 
@@ -129,7 +129,7 @@ R1(config-subif)# ip address 172.17.10.1 255.255.255.0
 ```
 
 - Verify: `show vlans`, `show ip route`, `ping`/`tracert`
-→ The routing table built here later gets populated dynamically instead of statically in [§3 Dynamic Routing](#3-dynamic-routing)
+→ The routing table built here later gets populated dynamically instead of statically in [§3 Dynamic Routing](#3-dynamic-routing). VLAN-to-VLAN traffic filtering (e.g. blocking one department's LAN from reaching another) is an **extended ACL** job — see [§4.6](#46-configuring-an-extended-acl).
 
 ---
 
@@ -154,7 +154,7 @@ R1(config-subif)# ip address 172.17.10.1 255.255.255.0
 
 | | Static | Dynamic |
 |---|---|---|
-| Security | No advertisements sent — more secure by default | Advertisements sent — needs additional config to secure (ties to [§4 ACL](#4-access-control-lists-acl-coming-soon) restricting routing update sources) |
+| Security | No advertisements sent — more secure by default | Advertisements sent — needs additional config to secure |
 | Scaling | Config complexity grows fast with network size | Scales independently of network size |
 | Resource use | No CPU/RAM overhead for algorithm/updates | Requires extra CPU, RAM, link bandwidth |
 | Failure response | Manual re-route required | Reroutes automatically if a path fails |
@@ -223,15 +223,212 @@ show ip route | begin Gateway
 
 ---
 
-## 4. Access Control Lists (ACL) (Coming Soon)
+## 4. Access Control Lists (ACL)
 
-- Standard/Extended ACL, wildcard masks, named ACLs, antispoofing ACLs
-- Will connect directly to [§1.3 SSH access restriction](#13-secure-remote-access--ssh) and [§2.5 filtering traffic between VLANs](#25-inter-vlan-routing)
+*Source: Cisco – Access Control Lists (Ch. 4)*
 
-## 5. Firewall (Coming Soon)
+### 4.1 What an ACL Does
 
-- Stateful firewall concepts beyond basic ACL packet filtering
-- Will flesh out the "implement firewalls" item from [§1.6 Best Practices](#16-security-best-practices-10)
+- An ACL is a sequential list of permit/deny statements called **ACEs (Access Control Entries)**
+- As traffic hits an interface with an ACL applied, the router checks it against each ACE **top to bottom** and stops at the first match — order matters, this is not evaluated as a whole set
+- **Every ACL has an implicit `deny any` at the end.** If nothing matches, the packet is dropped — this is why [§4.5](#45-configuring-a-standard-acl) explicitly adds `permit any` after a `deny host`: without it, that ACL would silently block everything, not just the one host.
+
+### 4.2 Wildcard Masks
+
+- A wildcard mask is the **inverse logic** of a subnet mask: `0` = must match this bit, `1` = ignore this bit
+- This is the same VLSM math from [§3.3](#33-configuring-ripv2) run backwards — instead of "which bits identify the subnet," it's "which bits do I care about matching"
+
+| IP Address | Wildcard | Result | Meaning |
+|---|---|---|---|
+| 192.168.1.1 | 0.0.0.0 | 192.168.1.1 | Match this exact host |
+| 192.168.1.1 | 255.255.255.255 | 0.0.0.0 | Match **any** host (equivalent to keyword `any`) |
+| 192.168.1.1 | 0.0.0.255 | 192.168.1.0 | Match the whole /24 subnet |
+
+- Shortcut keywords: `host 192.168.1.1` = `192.168.1.1 0.0.0.0`; `any` = `0.0.0.0 255.255.255.255`
+
+### 4.3 Applying ACLs to an Interface
+
+- **Inbound**: filters packets before they're routed. **Outbound**: filters after routing, regardless of which interface they came in on.
+- Hard rule: **one ACL per protocol, per direction, per interface.** Two interfaces × two protocols (IPv4/IPv6) = up to 8 separate ACLs on one router.
+
+### 4.4 Standard vs Extended ACLs
+
+| | Standard | Extended |
+|---|---|---|
+| Filters on | Source IP address only | Source IP, destination IP, protocol, source/destination port |
+| Number range | 1–99, 1300–1999 | 100–199, 2000–2699 |
+| Placement | As close to the **destination** as possible (it can't distinguish traffic by where it's going, so filtering early would block more than intended) | As close to the **source** as possible (specific enough to filter precisely right where the traffic originates, before it consumes bandwidth elsewhere) |
+
+→ This placement rule is the direct answer to the open question sitting in [§1.3](#13-secure-remote-access--ssh): restricting SSH/vty access to specific management IPs is a **standard** ACL job (matches on source only) — apply it close to the vty lines, not out on the edge.
+
+**Named ACLs** — alternative to numbers: alphanumeric name, must be unique, cannot start with a number, cannot contain spaces/punctuation, and unlike numbered ACLs you can insert/delete individual entries by sequence number without rebuilding the whole list (see [§4.7](#47-editing-acls)).
+
+### 4.5 Configuring a Standard ACL
+
+**Numbered:**
+```
+R1(config)# access-list 10 remark Permit hosts from the 192.168.10.0 LAN
+R1(config)# access-list 10 permit 192.168.10.0 0.0.0.255
+R1(config)# interface s0/0/0
+R1(config-if)# ip access-group 10 out
+```
+
+**Named:**
+```
+R1(config)# ip access-list standard NO_ACCESS
+R1(config-std-nacl)# deny host 192.168.11.10
+R1(config-std-nacl)# permit any
+R1(config-std-nacl)# exit
+R1(config)# interface g0/0
+R1(config-if)# ip access-group NO_ACCESS out
+```
+
+**Verify:**
+```
+show access-lists
+show ip interface g0/0
+```
+`show ip interface` confirms which ACL is active per direction (`Outgoing access list is NO_ACCESS`) — this is the fast way to check if an ACL is actually applied, not just configured. Configuring an ACL and forgetting `ip access-group` is a common gap — the list exists but does nothing.
+
+### 4.6 Configuring an Extended ACL
+
+```
+R1(config)# access-list 103 permit tcp 192.168.10.0 0.0.0.255 any eq 80
+R1(config)# access-list 103 permit tcp 192.168.10.0 0.0.0.255 any eq 443
+R1(config)# access-list 104 permit tcp any 192.168.10.0 0.0.0.255 established
+R1(config)# interface g0/0
+R1(config-if)# ip access-group 103 in
+R1(config-if)# ip access-group 104 out
+```
+- `established` matches only TCP replies (ACK/RST flag set) — used to permit return traffic for connections initiated from inside, without opening the interface to unsolicited inbound connections
+- Named extended ACLs work the same way, just under `ip access-list extended NAME`, and matter here because they're self-documenting — `SURFING` / `BROWSING` reads better in a `show access-lists` output during an interview than `access-list 103` does
+
+**Applying an extended ACL to restrict traffic between departments** (the [§2.5](#25-inter-vlan-routing) VLAN-to-VLAN traffic filtering case):
+```
+R1(config)# access-list 101 deny tcp 192.168.11.0 0.0.0.255 192.168.10.0 0.0.0.255 eq ftp
+R1(config)# access-list 101 deny tcp 192.168.11.0 0.0.0.255 192.168.10.0 0.0.0.255 eq ftp-data
+R1(config)# access-list 101 permit ip any any
+R1(config)# interface g0/1
+R1(config-if)# ip access-group 101 in
+```
+Note the explicit `permit ip any any` at the end — without it, the implicit deny from [§4.1](#41-what-an-acl-does) would block **all** traffic from that VLAN, not just FTP.
+
+### 4.7 Editing ACLs
+
+Two ways, don't mix them up:
+- **Text editor method**: `no access-list <number>` removes the whole list, then paste the corrected version back in — destructive, all-or-nothing
+- **Sequence number method** (named ACLs only): `no <seq#>` removes just that one line, then re-add with the same sequence number to keep it in position
+```
+R1(config)# ip access-list extended SURFING
+R1(config-ext-nacl)# no 10
+R1(config-ext-nacl)# 10 permit tcp 192.168.10.0 0.0.0.255 any eq www
+```
+This matters operationally: on a live ACL controlling production traffic, `no access-list` drops the whole filter for the seconds between removal and re-entry. Sequence numbers avoid that gap.
+
+---
+
+## 5. Firewall
+
+*Source: Cisco – Implementing Firewall Technologies (Ch. 4)*
+
+### 5.1 What a Firewall Is
+
+All firewalls share three properties: resistant to attack, the **only transit point** between networks (all traffic must pass through it), and enforce an access control policy.
+
+### 5.2 Antispoofing with ACLs
+
+An external-facing interface should never accept inbound traffic claiming to come from private, loopback, multicast, or broadcast address space — no legitimate external host uses those as a source address, so seeing one means the source is spoofed.
+
+```
+R1(config)# access-list 150 deny ip 0.0.0.0 255.255.255.255 any
+R1(config)# access-list 150 deny ip 10.0.0.0 0.255.255.255 any
+R1(config)# access-list 150 deny ip 127.0.0.0 0.255.255.255 any
+R1(config)# access-list 150 deny ip 172.16.0.0 0.15.255.255 any
+R1(config)# access-list 150 deny ip 192.168.0.0 0.0.255.255 any
+R1(config)# access-list 150 deny ip 224.0.0.0 15.255.255.255 any
+R1(config)# access-list 150 deny ip host 255.255.255.255 any
+```
+Applied inbound on the internet-facing interface. Mirror rule on the internal interface only permits traffic actually sourced from the internal subnet:
+```
+R1(config)# access-list 105 permit ip 192.168.1.0 0.0.0.255 any
+```
+→ This is a direct application of [§4.6 extended ACL syntax](#46-configuring-an-extended-acl) — nothing new here syntactically, just a specific, well-known rule set. Worth knowing this exists as a named pattern ("antispoofing" / "bogon filtering") for an interview, not just as ACL lines.
+
+### 5.3 Permitting Necessary Traffic Through a Firewall
+
+Default-deny, then explicitly permit only what's needed — inbound only to the specific server and port that needs it, and admin protocols (SSH, syslog, SNMP trap) only from the specific admin host, not from `any`:
+```
+R1(config)# access-list 180 permit udp any host 192.168.20.2 eq domain
+R1(config)# access-list 180 permit tcp any host 192.168.20.2 eq smtp
+R1(config)# access-list 180 permit tcp any host 192.168.20.2 eq ftp
+R1(config)# access-list 180 permit tcp host 200.5.5.5 host 10.0.1.1 eq 22
+R1(config)# access-list 180 permit udp host 200.5.5.5 host 10.0.1.1 eq syslog
+R1(config)# access-list 180 permit udp host 200.5.5.5 host 10.0.1.1 eq snmptrap
+```
+→ This is the practical form of the [§4.1](#41-what-an-acl-does) implicit deny principle: don't write a deny-everything-except rule, write only the permits you need and let the implicit deny do the rest.
+
+### 5.4 Mitigating ICMP Abuse
+
+ICMP is useful for diagnostics but abusable for reconnaissance (ping sweeps) and DoS. Don't block it wholesale — permit only the ICMP types that are actually needed in each direction:
+```
+! Inbound from Internet — only allow replies to pings WE sent out
+R1(config)# access-list 112 permit icmp any any echo-reply
+R1(config)# access-list 112 permit icmp any any source-quench
+R1(config)# access-list 112 permit icmp any any unreachable
+R1(config)# access-list 112 deny icmp any any
+R1(config)# access-list 112 permit ip any any
+
+! Outbound from internal LAN — allow us to ping out, but not much else
+R1(config)# access-list 114 permit icmp 192.168.1.0 0.0.0.255 any echo
+R1(config)# access-list 114 permit icmp 192.168.1.0 0.0.0.255 any parameter-problem
+R1(config)# access-list 114 permit icmp 192.168.1.0 0.0.0.255 any packet-too-big
+R1(config)# access-list 114 permit icmp 192.168.1.0 0.0.0.255 any source-quench
+R1(config)# access-list 114 deny icmp any any
+R1(config)# access-list 114 permit ip any any
+```
+Note `deny icmp any any` is immediately followed by `permit ip any any` in both — without that last line, the [§4.1](#41-what-an-acl-does) implicit deny would silently block **all** IP traffic, not just the unwanted ICMP types.
+
+### 5.5 Types of Firewalls (by OSI Layer Coverage)
+
+| Type | Layers | What it does |
+|---|---|---|
+| **Packet Filtering** | L3–L4 | Matches source/dest IP, protocol, source/dest port, SYN flag — this is exactly what [§4 standard/extended ACLs](#4-access-control-lists-acl) already do |
+| **Stateful** | L3–L5 | Adds a **state table** tracking established sessions — only permits return traffic that matches a session it actually saw initiated |
+| **Application Gateway (Proxy)** | L3–L7 | Terminates and re-originates the connection itself, inspecting all the way up to the application layer |
+| **NAT** | L3–L4 | Hides internal addressing as a side effect of translation |
+
+### 5.6 Stateful Firewalls vs Plain ACLs
+
+This is the answer to a gap [§4.6](#46-configuring-an-extended-acl) glossed over: the `established` keyword on an extended ACL is **not real state tracking** — it just checks whether the ACK or RST flag is set on an inbound TCP segment. It's a stateless approximation: an attacker can simply set the ACK flag on a crafted packet and get past it. A real stateful firewall maintains a **state table** built from watching the actual TCP handshake (or UDP/ICMP session data) and only lets return traffic through that matches a session it saw begin.
+
+| Benefits | Limitations |
+|---|---|
+| Primary means of defense | No application-layer inspection |
+| Strong packet filtering | Cannot filter stateless protocols |
+| Better performance than static packet filters | Struggles with dynamic port negotiation (e.g. FTP active mode, VoIP) |
+| Defends against spoofing and DoS | No user authentication support |
+| Richer logging | |
+
+**Next-Generation Firewalls (NGFW)** go further: app-level visibility/control, reputation-based web filtering, policy enforcement by user/device/role/app/threat profile, plus NAT, VPN, and IPS in one device.
+
+### 5.7 Network Zones
+
+- **Inside (trusted/private)** vs **Outside (untrusted/public)**: inside can initiate out (HTTP/SMTP/DNS), outside gets no unsolicited access in — this is the plain-language version of the [§5.3](#53-permitting-necessary-traffic-through-a-firewall) permit rules above
+- **DMZ**: a middle zone for the servers that legitimately need to be reached from the internet (web/mail/DNS), so the private network never has to be directly exposed. Traffic pattern: DMZ ↔ Internet is selectively permitted, Internet → Private is blocked outright, Private → Internet/DMZ is inspected and mostly permitted.
+- **Zone-Based Policy Firewall (ZPF)**: interfaces are grouped into named zones; traffic between two interfaces in the **same** zone flows freely with no policy applied by default — policy only gets enforced on traffic crossing **between** zones. This is a materially different model from interface-based ACLs (which apply per-interface, not per-zone-pair) and is what modern Cisco firewall configs (ASA, IOS ZFW) actually use instead of the flat `ip access-group` model in [§4](#4-access-control-lists-acl).
+
+### 5.8 Layered Defense & Best Practices
+
+Firewalls are one layer, not the whole defense: network core security, perimeter security, endpoint security, and communications security all need to exist alongside it.
+
+Firewall-specific best practices:
+- Position firewalls at actual security boundaries (not arbitrarily)
+- Don't rely on the firewall exclusively — defense in depth
+- **Deny all by default, permit only what's needed** — the underlying principle behind every ACL in [§4](#4-access-control-lists-acl) and every rule in this section
+- Control physical access to the firewall itself
+- Monitor firewall logs, not just configure and forget
+- Use change management for firewall config changes — an unreviewed rule change is how misconfigurations ship to production
+- Remember firewalls primarily stop **technical attacks from outside** — they don't stop insider threats, social engineering, or an already-compromised internal host
 
 ---
 
@@ -248,8 +445,13 @@ show ip route | begin Gateway
 - [ ] RIPv2 configuration verified with `show ip route` / `show ip protocols` screenshots
 - [ ] RIPv1 vs RIPv2 + `no auto-summary` before/after comparison (VLSM failure demo)
 - [ ] OSPF configuration (coming soon)
-- [ ] Standard/Extended ACL configuration (coming soon)
-- [ ] Firewall / zone-based policy (coming soon)
+- [ ] Standard ACL restricting vty (SSH) access to a management subnet
+- [ ] Extended ACL filtering VLAN-to-VLAN traffic (e.g. block FTP between departments)
+- [ ] `show ip interface` verification screenshot proving the ACL is actually applied, not just configured
+- [ ] Antispoofing ACL on the WAN-facing interface (bogon/private-range filtering)
+- [ ] Explicit permit rules for necessary services only, default-deny confirmed via `show access-lists`
+- [ ] ICMP filtering — permit only required types, explicit `permit ip any any` after the ICMP deny
+- [ ] Firewall / zone-based policy — implementation still pending (Cisco IOS ZFW or ASA config, if TMC scope covers it)
 
 ---
 
