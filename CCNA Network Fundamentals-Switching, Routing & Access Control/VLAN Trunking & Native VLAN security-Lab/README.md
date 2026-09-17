@@ -87,8 +87,11 @@ fully isolated broadcast domains — this failure is expected, not a
 fault.
 
 <img width="1338" height="498" alt="5_Verifiying Vlan" src="https://github.com/user-attachments/assets/9cf5c755-15ad-439d-ace9-b7602b3e3035" />
+
 <img width="1385" height="517" alt="6_Verifying Vlan" src="https://github.com/user-attachments/assets/c3098b2c-47f4-4561-aad5-5e6b07f54df5" />
+
 <img width="1047" height="712" alt="7_Ping between Vlan 10" src="https://github.com/user-attachments/assets/fc132163-51a9-4849-9c3a-a7b23c1d3c63" />
+
 <img width="1045" height="825" alt="8_Ping between Vlan 20 to 10" src="https://github.com/user-attachments/assets/46143857-b37f-4b24-921a-1ace3daff363" />
 
  
